@@ -1,39 +1,57 @@
 package edu.neoflex.vacation_pay_calculator;
 
+import edu.neoflex.vacation_pay_calculator.service.VacationPayService;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.HttpClientErrorException;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
+import java.math.BigDecimal;
+import java.time.Instant;
+import java.util.logging.Logger;
 
 @RestController
 public class VacationPayController {
 
-    VacationPayCalculator vacationPayCalculator;
+    private static final Logger log = Logger.getGlobal();
+
+    private final VacationPayService vacationPayService;
+
+    public VacationPayController(VacationPayService vacationPayService) {
+        this.vacationPayService = vacationPayService;
+    }
 
     @GetMapping
     @RequestMapping("/calculate")
-    public ResponseEntity<Double> calculate(double salary, int countDays, String startDate) throws HttpClientErrorException.BadRequest {
-        if (startDate == null) {
-            vacationPayCalculator = new DefaultVacationPayCalculator();
-            return new ResponseEntity<>(vacationPayCalculator.calculate(salary, countDays), HttpStatus.OK);
-        }
+    public ResponseEntity<?> calculate(
+            @RequestParam("salary")
+            @DecimalMin(value = "0", message = "Salary cannot be less than 0")
+            BigDecimal salary,
 
+            @RequestParam("vacationDays")
+            @Min(value = 0, message = "Vacation days cannot be less than 0")
+            @Max(value = 28, message = "Vacation days cannot be more than 28")
+            int vacationDays,
+
+            @RequestParam(value = "vacationDate", required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+            String vacationDate
+    ) {
+        log.info("Request for pay calculation: salary=" + salary +
+                ", vacationDays=" + vacationDays +
+                ", vacationDate=" + vacationDate);
         try {
-            Date date = new SimpleDateFormat("dd.MM.yyyy").parse(startDate);
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(date);
-            vacationPayCalculator = new VacationPayCalculatorWithHolidaysDecorator(new DefaultVacationPayCalculator(), calendar);
-        } catch (ParseException e) {
+            final BigDecimal calculated = vacationPayService.calculate(salary, vacationDays, vacationDate);
+            return new ResponseEntity<>(calculated, HttpStatus.OK);
+        } catch (Exception e) {
+            log.warning(e.getMessage());
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-
-        return new ResponseEntity<>(vacationPayCalculator.calculate(salary, countDays), HttpStatus.OK);
     }
 }
