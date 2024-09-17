@@ -1,4 +1,4 @@
-package edu.neoflex.vacation_pay_calculator;
+package edu.neoflex.vacation_pay_calculator.controller;
 
 import edu.neoflex.vacation_pay_calculator.service.VacationPayService;
 import jakarta.validation.constraints.DecimalMin;
@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
-import java.time.Instant;
+import java.text.ParseException;
 import java.util.logging.Logger;
 
 @RestController
@@ -49,7 +49,7 @@ public class VacationPayController {
         try {
             final BigDecimal calculated = vacationPayService.calculate(salary, vacationDays, vacationDate);
             return new ResponseEntity<>(calculated, HttpStatus.OK);
-        } catch (Exception e) {
+        } catch (ParseException e) {
             log.warning(e.getMessage());
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }

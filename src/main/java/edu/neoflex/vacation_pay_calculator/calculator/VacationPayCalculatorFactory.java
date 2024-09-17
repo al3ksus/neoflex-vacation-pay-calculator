@@ -5,16 +5,14 @@ import edu.neoflex.vacation_pay_calculator.calculator.calculators.VacationPayCal
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.Instant;
 import java.util.Calendar;
-import java.util.Date;
 
 public class VacationPayCalculatorFactory {
 
     private static final String DATE_PATTERN = "yyyy-MM-dd";
 
     public static VacationPayCalculator getCalculator(String vacationDate) throws ParseException {
-        if (vacationDate.isBlank()) {
+        if (vacationDate == null) {
             return new VacationPayCalculatorImpl();
         } else {
             Calendar calendar = Calendar.getInstance();

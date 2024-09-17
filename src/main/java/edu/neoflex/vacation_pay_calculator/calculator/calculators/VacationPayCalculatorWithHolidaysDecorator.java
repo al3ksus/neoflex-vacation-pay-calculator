@@ -1,8 +1,6 @@
 package edu.neoflex.vacation_pay_calculator.calculator.calculators;
 
-import edu.neoflex.vacation_pay_calculator.Constants;
 import edu.neoflex.vacation_pay_calculator.calculator.VacationPayCalculator;
-import edu.neoflex.vacation_pay_calculator.calculator.calculators.VacationPayCalculatorDecorator;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -23,10 +21,18 @@ public class VacationPayCalculatorWithHolidaysDecorator extends VacationPayCalcu
             Calendar.NOVEMBER, new Integer[] {4}
     );
 
-    private final Calendar vacationDate;
+    private Calendar vacationDate;
 
     public VacationPayCalculatorWithHolidaysDecorator(VacationPayCalculator decoratedCalculator, Calendar vacationDate) {
         super(decoratedCalculator);
+        this.vacationDate = vacationDate;
+    }
+
+    public VacationPayCalculatorWithHolidaysDecorator(VacationPayCalculator decoratedCalculator) {
+        super(decoratedCalculator);
+    }
+
+    public void setVacationDate(Calendar vacationDate) {
         this.vacationDate = vacationDate;
     }
 
