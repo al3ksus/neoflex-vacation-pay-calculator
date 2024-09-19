@@ -13,7 +13,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 @AutoConfigureMockMvc
 public class VacationPayControllerTest {
 
-    ObjectMapper objectMapper;
     @Autowired
     MockMvc mockMvc;
 
