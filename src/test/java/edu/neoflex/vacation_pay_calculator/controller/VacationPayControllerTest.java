@@ -1,6 +1,5 @@
 package edu.neoflex.vacation_pay_calculator.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -18,8 +17,38 @@ public class VacationPayControllerTest {
 
     @Test
     public void calculateTest() throws Exception {
-        mockMvc.perform(
-                MockMvcRequestBuilders.get("/calculate").param("salary", "30000.0").param("vacationDays", "10")
-        ).andExpect(MockMvcResultMatchers.status().is(200));
+        mockMvc.perform(MockMvcRequestBuilders.get("/calculate")
+                        .param("salary", "100000.0")
+                        .param("vacationDays", "10")
+        )
+                .andExpect(MockMvcResultMatchers.status().is(200));
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/calculate")
+                        .param("salary", "100000.0")
+                        .param("vacationDays", "10")
+                        .param("vacationDate", "2024-20-09")
+                )
+                .andExpect(MockMvcResultMatchers.status().is(200));
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/calculate")
+                        .param("salary", "100000.0")
+                        .param("vacationDays", "10")
+                        .param("vacationDate", "2024.20.09")
+                )
+                .andExpect(MockMvcResultMatchers.status().is(400));
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/calculate")
+                        .param("salary", "100000.0")
+                        .param("vacationDays", "100")
+                        .param("vacationDate", "2024.20.09")
+                )
+                .andExpect(MockMvcResultMatchers.status().is(400));
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/calculate")
+                        .param("salary", "-100000.0")
+                        .param("vacationDays", "10")
+                        .param("vacationDate", "2024.20.09")
+                )
+                .andExpect(MockMvcResultMatchers.status().is(400));
     }
 }
