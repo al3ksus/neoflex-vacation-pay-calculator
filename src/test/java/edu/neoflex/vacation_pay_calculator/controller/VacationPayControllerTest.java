@@ -18,17 +18,19 @@ public class VacationPayControllerTest {
     @Test
     public void calculateTest() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/calculate")
-                        .param("salary", "100000.0")
+                        .param("salary", "29300.0")
                         .param("vacationDays", "10")
         )
-                .andExpect(MockMvcResultMatchers.status().is(200));
+                .andExpect(MockMvcResultMatchers.status().is(200))
+                .andExpect(MockMvcResultMatchers.content().string("10000.0"));
 
         mockMvc.perform(MockMvcRequestBuilders.get("/calculate")
-                        .param("salary", "100000.0")
+                        .param("salary", "58600.0")
                         .param("vacationDays", "10")
                         .param("vacationDate", "2024-20-09")
                 )
-                .andExpect(MockMvcResultMatchers.status().is(200));
+                .andExpect(MockMvcResultMatchers.status().is(200))
+                .andExpect(MockMvcResultMatchers.content().string("12000.0"));
 
         mockMvc.perform(MockMvcRequestBuilders.get("/calculate")
                         .param("salary", "100000.0")
